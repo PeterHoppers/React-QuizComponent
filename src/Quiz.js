@@ -8,8 +8,44 @@ class Quiz extends Component {
 
   constructor(props){
     super(props);
-    this.state = {quiz_position: 1,
+
+    let randomIndexs = this.createRandomInts(quizData.quiz_questions.length);
+
+    this.state = {random_Indexs: randomIndexs,
+                  quiz_position: 1,
                   quiz_correct: 0}
+  }
+
+  createRandomInts(length)
+  {
+      let quizPositions = [];
+
+      for(let i = 0; i < length; i++){
+        quizPositions[i] = i;
+      }
+
+      quizPositions = this.shuffle(quizPositions);
+      return quizPositions;
+  }
+
+  shuffle(array)
+  {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex)
+    {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
   }
 
   showNextQuestion(guessedIncorrectly){
@@ -29,6 +65,7 @@ class Quiz extends Component {
 
   render(){
     const isQuizEnd = (this.state.quiz_position - 1 === quizData.quiz_questions.length);
+    const quizQuestionNumber = quizData.quiz_questions[this.state.random_Indexs[this.state.quiz_position - 1]];
     return (
       <div>
         <div className= "QuizInfo">
@@ -36,7 +73,7 @@ class Quiz extends Component {
           <p className = "ScoreDisplay">Number Correct: {this.state.quiz_correct}</p>
         </div>
         {isQuizEnd ? <QuizEnd resetClickHandler = {this.handleResetClick.bind(this)}/> :
-        <QuizQuestion showNextQuestionHandler = {this.showNextQuestion.bind(this)} quiz_question = {quizData.quiz_questions[this.state.quiz_position - 1]}/>
+        <QuizQuestion showNextQuestionHandler = {this.showNextQuestion.bind(this)} quiz_question = {quizQuestionNumber}/>
       }
       </div>
     )
